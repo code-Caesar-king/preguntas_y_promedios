@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>preguntas y promedios — ¿Qué opina tu ciudad?</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>preguntas y promedios</h1>
+    <p>Responde y descubre qué opina tu ciudad y tu departamento.</p>
+  </header>
+
+  <main>
+    <!-- PASO 1: elegir ciudad -->
+    <section id="paso-ciudad" class="card">
+      <h2>1. ¿De dónde eres?</h2>
+      <label for="select-departamento">Departamento</label>
+      <select id="select-departamento">
+        <option value="">Cargando...</option>
+      </select>
+
+      <label for="select-ciudad">Ciudad</label>
+      <select id="select-ciudad" disabled>
+        <option value="">Primero elige un departamento</option>
+      </select>
+
+      <button id="btn-empezar" disabled>Empezar</button>
+    </section>
+
+    <!-- PASO 2: responder preguntas -->
+    <section id="paso-preguntas" class="card hidden">
+      <h2>2. Responde</h2>
+      <div id="contenedor-preguntas"></div>
+      <button id="btn-enviar">Enviar respuestas</button>
+      <p id="mensaje-envio" class="mensaje"></p>
+    </section>
+
+    <!-- PASO 3: ver promedios -->
+    <section id="paso-resultados" class="card hidden">
+      <h2>3. Resultados</h2>
+      <label for="select-pregunta-resultado">Pregunta</label>
+      <select id="select-pregunta-resultado"></select>
+
+      <div class="tabs">
+        <button class="tab activo" data-vista="ciudad">Por ciudad</button>
+        <button class="tab" data-vista="departamento">Por departamento</button>
+      </div>
+
+      <div id="tabla-resultados"></div>
+    </section>
+  </main>
+
+  <!-- IMPORTANTE: Cargar Supabase PRIMERO, luego nuestro script -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
