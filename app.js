@@ -4,14 +4,15 @@
 const SUPABASE_URL = "https://rvgvpzcosqzwidfgnrwv.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2Z3ZwemNvc3F6d2lkZmducnd2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MTEzNTUsImV4cCI6MjEwODE4NzM1NX0.kaZgAD1yAh0XTviRrOwVkEkl9UqQyVHay9ORy1f91-8";
 
-// Creamos el cliente (usando el objeto global 'supabase' del CDN)
+// Usamos el objeto global 'supabase' del CDN y lo llamamos 'db' para evitar conflictos
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
-    persistSession: false, // Ideal porque tus usuarios son anónimos
+    persistSession: false,
     autoRefreshToken: false,
     detectSessionInUrl: false
   }
 });
+
 // ==========================================
 // 2. ESTADO GLOBAL Y ELEMENTOS DEL DOM
 // ==========================================
@@ -65,7 +66,6 @@ async function cargarDepartamentos() {
     return;
   }
   
-  console.log("📦 Departamentos recibidos:", data);
   let html = '<option value="">Selecciona un departamento</option>';
   data.forEach(dep => {
     html += `<option value="${dep.id}">${dep.nombre}</option>`;
@@ -82,7 +82,6 @@ async function cargarPreguntas() {
     return;
   }
   
-  console.log("📦 Preguntas recibidas:", data);
   estado.preguntas = data;
   
   let html = '';
@@ -96,7 +95,6 @@ async function cargarPreguntas() {
 // 5. EVENTOS (CLICS Y SELECTORES)
 // ==========================================
 function configurarEventos() {
-  // Al cambiar departamento, cargar ciudades
   DOM.selectDepto.addEventListener("change", async (e) => {
     const depId = e.target.value;
     if (!depId) {
@@ -109,10 +107,7 @@ function configurarEventos() {
     DOM.selectCiudad.innerHTML = '<option value="">Cargando...</option>';
     DOM.selectCiudad.disabled = true;
 
-    const { data, error } = await db.from("ciudad")
-    .select("id, nombre")
-    .eq("departamento_id", depId) // <-- AQUÍ ESTÁ LA MAGIA
-    .order("nombre");
+    const { data, error } = await db.from("ciudad").select("id, nombre").eq("departamento_id", depId).order("nombre");
     
     if (error) {
       console.error("Error cargando ciudades:", error);
@@ -127,13 +122,11 @@ function configurarEventos() {
     DOM.selectCiudad.disabled = false;
   });
 
-  // Al cambiar ciudad, habilitar botón de empezar
   DOM.selectCiudad.addEventListener("change", (e) => {
     estado.ciudadId = e.target.value;
     DOM.btnEmpezar.disabled = !estado.ciudadId;
   });
 
-  // Botón Empezar
   DOM.btnEmpezar.addEventListener("click", () => {
     if (!estado.ciudadId) return;
     DOM.pasoCiudad.classList.add("hidden");
@@ -141,10 +134,8 @@ function configurarEventos() {
     renderizarPreguntas();
   });
 
-  // Botón Enviar
   DOM.btnEnviar.addEventListener("click", enviarRespuestas);
 
-  // Pestañas de resultados
   DOM.tabs.forEach(tab => {
     tab.addEventListener("click", () => {
       DOM.tabs.forEach(t => t.classList.remove("activo"));
@@ -154,7 +145,6 @@ function configurarEventos() {
     });
   });
 
-  // Selector de pregunta en resultados
   DOM.selectPreguntaRes.addEventListener("change", cargarResultados);
 }
 
@@ -163,16 +153,31 @@ function configurarEventos() {
 // ==========================================
 function renderizarPreguntas() {
   let html = '';
-  estado.respuestas = {}; // Limpiar respuestas previas
+  estado.respuestas = {}; 
+
+  // Función para agrupar y asignar color/ícono según palabras clave
+  const obtenerCategoria = (texto) => {
+    const t = texto.toLowerCase();
+    if (t.includes('clima') || t.includes('calor') || t.includes('frío') || t.includes('zonas verdes') || t.includes('caminando')) 
+      return { clase: 'cat-clima', icono: '🌤️' };
+    if (t.includes('transporte') || t.includes('tarifas') || t.includes('bicicleta') || t.includes('peatones') || t.includes('desplazarse')) 
+      return { clase: 'cat-transporte', icono: '🚌' };
+    if (t.includes('animada') || t.includes('cultura') || t.includes('ocio') || t.includes('orgullo') || t.includes('ideal para vivir') || t.includes('recomendarías')) 
+      return { clase: 'cat-vibra', icono: '✨' };
+    return { clase: 'cat-calidad', icono: '🏙️' }; 
+  };
 
   estado.preguntas.forEach(p => {
+    const cat = obtenerCategoria(p.texto);
+    
+    // Todas nuestras preguntas nuevas son de escala 1-5
     const opciones = p.tipo === 'si_no' 
       ? [{v: 1, t: 'Sí'}, {v: 0, t: 'No'}]
       : [1, 2, 3, 4, 5].map(n => ({v: n, t: n.toString()}));
 
     html += `
-      <div class="pregunta" data-id="${p.id}">
-        <p>${p.texto}</p>
+      <div class="pregunta ${cat.clase}" data-id="${p.id}">
+        <p><span class="icono-pregunta">${cat.icono}</span> ${p.texto}</p>
         <div class="opciones">
           ${opciones.map(o => `<div class="opcion" data-valor="${o.v}">${o.t}</div>`).join('')}
         </div>
@@ -182,7 +187,6 @@ function renderizarPreguntas() {
 
   DOM.contenedorPreguntas.innerHTML = html;
 
-  // Enlazar clics en las opciones
   DOM.contenedorPreguntas.querySelectorAll('.pregunta').forEach(bloque => {
     const pId = bloque.dataset.id;
     bloque.querySelectorAll('.opcion').forEach(opcion => {
@@ -196,7 +200,6 @@ function renderizarPreguntas() {
 }
 
 async function enviarRespuestas() {
-  // Validar que respondió todo
   const faltantes = estado.preguntas.filter(p => !(p.id in estado.respuestas));
   if (faltantes.length > 0) {
     DOM.msgEnvio.textContent = `Te faltan ${faltantes.length} preguntas.`;
@@ -208,7 +211,6 @@ async function enviarRespuestas() {
   DOM.msgEnvio.textContent = "Enviando...";
   DOM.msgEnvio.classList.remove("error");
 
-  // Preparar los datos para insertar
   const filas = estado.preguntas.map(p => ({
     pregunta_id: parseInt(p.id),
     ciudad_id: parseInt(estado.ciudadId),
@@ -242,7 +244,6 @@ async function cargarResultados() {
 
   DOM.tablaResultados.innerHTML = "<p>Cargando resultados...</p>";
 
-  // Llamamos a las funciones RPC que creaste en Supabase
   const funcionRPC = estado.vistaActual === 'ciudad' ? 'promedio_por_ciudad' : 'promedio_por_departamento';
   
   const { data, error } = await db.rpc(funcionRPC, { p_pregunta_id: parseInt(preguntaId) });
@@ -258,7 +259,6 @@ async function cargarResultados() {
     return;
   }
 
-  // Construir tabla
   let html = '<table><thead><tr>';
   if (estado.vistaActual === 'ciudad') {
     html += '<th>Ciudad</th><th>Departamento</th><th>Promedio</th><th>Votos</th>';
@@ -270,9 +270,9 @@ async function cargarResultados() {
   data.forEach(row => {
     html += '<tr>';
     if (estado.vistaActual === 'ciudad') {
-      html += `<td>${row.ciudad}</td><td>${row.departamento}</td><td><b>${row.promedio}</b></td><td>${row.votos}</td>`;
+      html += `<td>${row.ciudad}</td><td>${row.departamento}</td><td><b class="promedio">${row.promedio}</b></td><td>${row.votos}</td>`;
     } else {
-      html += `<td>${row.departamento}</td><td><b>${row.promedio}</b></td><td>${row.votos}</td>`;
+      html += `<td>${row.departamento}</td><td><b class="promedio">${row.promedio}</b></td><td>${row.votos}</td>`;
     }
     html += '</tr>';
   });
