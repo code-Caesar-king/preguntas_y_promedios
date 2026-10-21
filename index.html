@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>¿Qué opinas de tu ciudad?</title>
+  <title>Ideota — ¿Qué opina tu ciudad?</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header>
-    <!-- Gráfico decorativo SVG -->
     <div class="header-graphic">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="20" x2="18" y2="10"></line>
@@ -37,22 +36,29 @@
       <button id="btn-empezar" disabled>Empezar</button>
     </section>
 
-    <!-- PASO 2: responder preguntas -->
+    <!-- PASO 2: responder preguntas (TIPO WIZARD) -->
     <section id="paso-preguntas" class="card hidden">
-      <h2>2. Responde</h2>
-      
-      <!-- Explicación de la escala -->
-      <div class="escala-explicacion">
-        <p>Desliza y selecciona tu respuesta. Usa la siguiente escala:</p>
-        <div class="escala-visual">
-          <span><b>1</b> Muy malo / Nada</span>
-          <span><b>3</b> Neutral</span>
-          <span><b>5</b> Excelente / Mucho</span>
+      <!-- Barra de progreso -->
+      <div class="progreso-container">
+        <div class="progreso-header">
+          <span id="progreso-texto">Paso 1</span>
+          <span id="progreso-porcentaje">0%</span>
+        </div>
+        <div class="progreso-barra">
+          <div id="progreso-relleno" class="progreso-relleno"></div>
         </div>
       </div>
 
-      <div id="contenedor-preguntas"></div>
-      <button id="btn-enviar">Enviar respuestas</button>
+      <div id="contenedor-preguntas">
+        <!-- Aquí JavaScript inyectará el grupo de preguntas -->
+      </div>
+
+      <!-- Botones de Navegación -->
+      <div class="wizard-controles">
+        <button id="btn-atras" class="btn-secundario" disabled>← Atrás</button>
+        <button id="btn-siguiente" class="btn-primario" disabled>Siguiente →</button>
+      </div>
+      
       <p id="mensaje-envio" class="mensaje"></p>
     </section>
 
@@ -75,7 +81,6 @@
     <p>Ideota · Proyecto académico · Datos anónimos</p>
   </footer>
 
-  <!-- IMPORTANTE: Cargar Supabase PRIMERO, luego nuestro script -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js"></script>
 </body>
