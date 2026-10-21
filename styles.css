@@ -13,11 +13,16 @@
   --bg-card-hover: #1c1c1c;
   --text-primary: #f3f4f6;
   --text-secondary: #9ca3af;
-  --accent: #6366f1; /* Un tono índigo/violeta moderno */
-  --accent-hover: #4f46e5;
+  --accent: #6366f1;
   --border: #27272a;
   --success: #22c55e;
   --error: #ef4444;
+  
+  /* Colores para las categorías de preguntas */
+  --color-clima: #3b82f6;      /* Azul */
+  --color-transporte: #f97316; /* Naranja */
+  --color-vibra: #a855f7;      /* Púrpura */
+  --color-calidad: #10b981;    /* Verde */
 }
 
 body {
@@ -37,6 +42,13 @@ header {
   text-align: center;
   max-width: 800px;
   margin: 0 auto 3rem auto;
+}
+
+.header-graphic {
+  display: flex;
+  justify-content: center;
+  color: var(--accent);
+  margin-bottom: 1rem;
 }
 
 header h1 {
@@ -88,6 +100,39 @@ main {
 }
 
 /* ==========================================
+   EXPLICACIÓN DE LA ESCALA
+   ========================================== */
+.escala-explicacion {
+  background-color: var(--bg-color);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.escala-explicacion p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.escala-visual {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.escala-visual b {
+  color: var(--text-primary);
+  background: var(--border);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-right: 0.3rem;
+}
+
+/* ==========================================
    FORMULARIOS (SELECTS Y BOTONES)
    ========================================== */
 label {
@@ -109,7 +154,7 @@ select {
   border: 1px solid var(--border);
   border-radius: 10px;
   font-family: inherit;
-  appearance: none; /* Quita la flecha por defecto */
+  appearance: none;
   background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239ca3af%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
   background-repeat: no-repeat;
   background-position: right 1rem center;
@@ -158,23 +203,36 @@ button:disabled {
    PREGUNTAS Y OPCIONES
    ========================================== */
 .pregunta {
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--border);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.pregunta:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
+.pregunta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .pregunta p {
   font-size: 1.1rem;
   font-weight: 500;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   line-height: 1.4;
 }
+
+.icono-pregunta {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+}
+
+/* Colores por categoría */
+.cat-clima { border-left: 4px solid var(--color-clima); }
+.cat-transporte { border-left: 4px solid var(--color-transporte); }
+.cat-vibra { border-left: 4px solid var(--color-vibra); }
+.cat-calidad { border-left: 4px solid var(--color-calidad); }
 
 .opciones {
   display: flex;
@@ -198,16 +256,38 @@ button:disabled {
 }
 
 .opcion:hover {
-  border-color: var(--accent);
+  border-color: #555;
   color: var(--text-primary);
 }
 
-.opcion.seleccionada {
-  background-color: var(--accent);
+/* Colores al seleccionar según categoría */
+.cat-clima .opcion.seleccionada {
+  background-color: var(--color-clima);
+  border-color: var(--color-clima);
   color: #fff;
-  border-color: var(--accent);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
   transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+}
+.cat-transporte .opcion.seleccionada {
+  background-color: var(--color-transporte);
+  border-color: var(--color-transporte);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.3);
+  transform: scale(1.05);
+}
+.cat-vibra .opcion.seleccionada {
+  background-color: var(--color-vibra);
+  border-color: var(--color-vibra);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+  transform: scale(1.05);
+}
+.cat-calidad .opcion.seleccionada {
+  background-color: var(--color-calidad);
+  border-color: var(--color-calidad);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+  transform: scale(1.05);
 }
 
 /* ==========================================
@@ -301,7 +381,7 @@ tr:hover td {
 }
 
 /* ==========================================
-   UTILIDADES
+   UTILIDADES Y PIE DE PÁGINA
    ========================================== */
 .hidden {
   display: none !important;
