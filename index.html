@@ -3,13 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>preguntas y promedios — ¿Qué opina tu ciudad?</title>
+  <title>¿Qué opinas de tu ciudad?</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header>
-    <h1>preguntas y promedios</h1>
-    <p>Responde y descubre qué opina tu ciudad y tu departamento.</p>
+    <!-- Gráfico decorativo SVG -->
+    <div class="header-graphic">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"></line>
+        <line x1="12" y1="20" x2="12" y2="4"></line>
+        <line x1="6" y1="20" x2="6" y2="14"></line>
+      </svg>
+    </div>
+    <h1>Ideota</h1>
+    <p>Descubre cómo se siente tu ciudad comparada con el resto del país.</p>
   </header>
 
   <main>
@@ -32,6 +40,17 @@
     <!-- PASO 2: responder preguntas -->
     <section id="paso-preguntas" class="card hidden">
       <h2>2. Responde</h2>
+      
+      <!-- Explicación de la escala -->
+      <div class="escala-explicacion">
+        <p>Desliza y selecciona tu respuesta. Usa la siguiente escala:</p>
+        <div class="escala-visual">
+          <span><b>1</b> Muy malo / Nada</span>
+          <span><b>3</b> Neutral</span>
+          <span><b>5</b> Excelente / Mucho</span>
+        </div>
+      </div>
+
       <div id="contenedor-preguntas"></div>
       <button id="btn-enviar">Enviar respuestas</button>
       <p id="mensaje-envio" class="mensaje"></p>
@@ -51,6 +70,10 @@
       <div id="tabla-resultados"></div>
     </section>
   </main>
+
+  <footer>
+    <p>Ideota · Proyecto académico · Datos anónimos</p>
+  </footer>
 
   <!-- IMPORTANTE: Cargar Supabase PRIMERO, luego nuestro script -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
