@@ -109,7 +109,10 @@ function configurarEventos() {
     DOM.selectCiudad.innerHTML = '<option value="">Cargando...</option>';
     DOM.selectCiudad.disabled = true;
 
-    const { data, error } = await db.from("ciudad").select("id, nombre").eq("departamento_id", depId).order("nombre");
+    const { data, error } = await db.from("ciudad")
+    .select("id, nombre")
+    .eq("departamento_id", depId) // <-- AQUÍ ESTÁ LA MAGIA
+    .order("nombre");
     
     if (error) {
       console.error("Error cargando ciudades:", error);
